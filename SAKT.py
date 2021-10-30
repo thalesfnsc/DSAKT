@@ -7,6 +7,10 @@ Last modified on Fri Apr 23 17:20:38 2021
 import torch
 import torch.nn as nn
 import numpy as np
+from utils import dataloader
+from utils import getdata
+from utils import get_data
+from sklearn.model_selection import train_test_split
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu");
 
@@ -58,18 +62,26 @@ from sklearn import metrics
 from utils import getdata, dataloader
 from tqdm import tqdm
 
-def train_sakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, train_path:str, valid_path:str, save_path:str):
+def train_sakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, train_path:str, valid_path:str, save_path:str,default:bool):
     
     print("using {}".format(device));
     
     batch_size = 128;
     epochs = 100;
+    
+    if(default):
+        train_data,N_train,E_train,unit_list_train = getdata(window_size=window_size, path=train_path, model_type='sakt')
+        valid_data,N_val,E_test,unit_list_val = getdata(window_size=window_size, path=valid_path, model_type='sakt');        
+        train_loader = dataloader(train_data, batch_size=batch_size, shuffle=True);
+        train_steps=len(train_loader);
+        E = max(E_train, E_test);
 
-    train_data,N_train,E_train,unit_list_train = getdata(window_size=window_size, path=train_path, model_type='sakt')
-    valid_data,N_val,E_test,unit_list_val = getdata(window_size=window_size, path=valid_path, model_type='sakt');        
-    train_loader = dataloader(train_data, batch_size=batch_size, shuffle=True);
-    train_steps=len(train_loader);
-    E = max(E_train, E_test);
+    else:
+        data,E = get_data(train_path,window_size)
+        train_data,valid_data = train_test_split(data.permute(1,0,2),test_size = 0.2)
+        train_loader = dataloader(train_data,batch_size=batch_size,shuffle=True)
+        train_steps = len(train_loader)
+        
 
     model = SAKT(device = device, num_skills=E, window_size=window_size, dim=dim, heads=heads, dropout=dropout);
     model.to(device);
@@ -82,7 +94,7 @@ def train_sakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, tra
         running_loss = 0.0;
         train_bar = tqdm(train_loader);
         for data in train_bar:
-            logits = model(data[0].to(device), data[1].to(device));
+            logits = model(data[0].to(device), data[1].to(device)); #data[0] = interaction data[1] = question ids one position ahead
             correct = data[2].float().unsqueeze(-1).to(device);
             
             loss = model.loss_function(logits, correct);
@@ -153,4 +165,5 @@ if __name__ =="__main__":
                lr=lr, 
                train_path=args.train_data, 
                valid_path=args.val_data, 
-               save_path=args.save_path);
+               save_path=args.save_path,
+               default=False );

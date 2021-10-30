@@ -1,5 +1,62 @@
 import torch
 import random
+from sklearn.model_selection import train_test_split
+import itertools
+import pandas as pd
+import numpy as np
+
+def get_data(data_path,max_sequence_size):
+    
+    array_responses = []
+    array_problems = []
+    array_problems_ahead = []
+    array_responses_ahead = []
+    #Loading data in a pandas DataFrame
+
+    df = pd.read_csv(data_path)
+
+    problems_ids = df['problem_id'].unique()
+    E = len(problems_ids)
+    
+    users_data = df.groupby('student_id')[['problem_id','condition','skill_name','correct']].agg(lambda x:list(x))
+    index_to_id = np.unique([*itertools.chain.from_iterable(users_data['problem_id'])])
+    id_to_index = {index_to_id[i]: i for i in range(len(index_to_id))}
+
+    #print(id_to_index)
+    sequence_sizes = []
+
+    for index,student in users_data.iterrows():
+        sequence_size = len(student['problem_id'])
+        sequence_sizes.append(sequence_size)
+        student_problem_id = [id_to_index[i] for i in student['problem_id']]
+
+        '''
+        if sequence_size > max_sequence_size:
+            for i in range(max_sequence_size,sequence_size):
+                array_responses.append(student['correct'][(i - max_sequence_size):i])
+                array_problems.append(student_problem_id[(i - max_sequence_size):i])
+
+        else:
+        '''    
+        len_responses = len(student['correct'])
+        len_exercises = len(student_problem_id)
+
+        array_responses.append(student['correct'][:len_responses -1] + [0] * ((max_sequence_size+1) - sequence_size)) 
+        array_problems.append(student_problem_id[:len_exercises -1] + [0] * ((max_sequence_size+1) - sequence_size))
+        array_problems_ahead.append(student_problem_id[1:] + [0]*((max_sequence_size+1) - sequence_size))
+        array_responses_ahead.append(student['correct'][1:] + [0] * ((max_sequence_size+1) -sequence_size ))
+
+    problems = torch.Tensor(array_problems)
+    problems_ahead = torch.Tensor(array_problems_ahead)
+    responses = torch.Tensor(array_responses)
+    responses_ahead = torch.Tensor(array_responses_ahead)
+    interaction = problems + E*responses
+    data = torch.stack((interaction,problems_ahead,responses_ahead))
+
+    return  data
+
+
+
 
 def getdata(window_size,path,model_type,drop=False):
     '''
@@ -83,9 +140,27 @@ def getdata(window_size,path,model_type,drop=False):
     input_2=torch.tensor(input_2)
     input_3=torch.tensor(input_3)
     input_4=torch.tensor(input_4)
+    print(E)
+
+    print("Exercise ids  (t)")
+    print(input_1[501]) #exercise id
+    print("Response (t)")
+    print(input_2[501]) #correct response
+    print("Exercise ids  (t+1)")
+    print(input_3[501]) #exercise ids 1 position ahead
+    print("Response (t +1)")
+    print(input_4[501])
+
 
     if model_type=='sakt':
         input_1=input_1+E*input_2;
+        
+        print("============NETWORK INPUT=============== \n")
+        print("E = 26688")
+        print("INTERACTION SEQUENCE: Exercise ids  (t) + E*Response (t) \n",input_1[0])
+        print("QUESTION SEQUENCE : Exercise ids  (t+1)\n ", input_3[0])
+        print("RESPONSE SEQUENCE: Responses (t+1) \n", input_4[0] )
+
         return torch.stack((input_1,input_3,input_4),0),N,E,units
     elif model_type=='saint':
         return torch.stack((input_1,input_2),0),N,E,units
