@@ -86,6 +86,7 @@ def train_sakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, tra
         train_steps = len(train_loader)
         
         #creating unit_list_val after separate train and valid data
+        count = 0
         unit_list_val = []
         for i in range(valid_data.shape[1]):
             for j in range(valid_data.shape[2]):
@@ -155,7 +156,7 @@ if __name__ =="__main__":
     args = parser.parse_args();
 
     lr = 0.001;
-    window_size = 50;
+    window_size = 350;
     dim = 64;
     dropout = 0.2;
     heads = 8;
