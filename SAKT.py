@@ -79,9 +79,22 @@ def train_sakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, tra
     else:
         data,E = get_data(train_path,window_size)
         train_data,valid_data = train_test_split(data.permute(1,0,2),test_size = 0.2)
+        train_data = train_data.permute(1,0,2)
+        valid_data = valid_data.permute(1,0,2)
+        N_val = valid_data.shape[1]
         train_loader = dataloader(train_data,batch_size=batch_size,shuffle=True)
         train_steps = len(train_loader)
         
+        #creating unit_list_val after separate train and valid data
+        unit_list_val = []
+        for i in range(valid_data.shape[1]):
+            for j in range(valid_data.shape[2]):
+                if valid_data[0][i][j] !=0:
+                    count = count +1
+            unit_list_val.append(count)
+            count = 0
+        
+
 
     model = SAKT(device = device, num_skills=E, window_size=window_size, dim=dim, heads=heads, dropout=dropout);
     model.to(device);
@@ -137,7 +150,7 @@ if __name__ =="__main__":
     parser.add_argument("-drp", "--dropout", type=float);
     parser.add_argument("-lr", "--learn_rate", type=float);
     parser.add_argument("-t", "--train_data", required=True);
-    parser.add_argument("-v", "--val_data", required=True);
+    parser.add_argument("-v", "--val_data", default=None);
     parser.add_argument("-s", "--save_path", required=True);
     args = parser.parse_args();
 

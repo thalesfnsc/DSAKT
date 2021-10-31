@@ -46,14 +46,14 @@ def get_data(data_path,max_sequence_size):
         array_problems_ahead.append(student_problem_id[1:] + [0]*((max_sequence_size+1) - sequence_size))
         array_responses_ahead.append(student['correct'][1:] + [0] * ((max_sequence_size+1) -sequence_size ))
 
-    problems = torch.Tensor(array_problems)
-    problems_ahead = torch.Tensor(array_problems_ahead)
-    responses = torch.Tensor(array_responses)
-    responses_ahead = torch.Tensor(array_responses_ahead)
+    problems = torch.IntTensor(array_problems)
+    problems_ahead = torch.IntTensor(array_problems_ahead)
+    responses = torch.IntTensor(array_responses)
+    responses_ahead = torch.IntTensor(array_responses_ahead)
     interaction = problems + E*responses
     data = torch.stack((interaction,problems_ahead,responses_ahead))
 
-    return  data
+    return  data,E
 
 
 
@@ -140,27 +140,27 @@ def getdata(window_size,path,model_type,drop=False):
     input_2=torch.tensor(input_2)
     input_3=torch.tensor(input_3)
     input_4=torch.tensor(input_4)
+    '''
     print(E)
-
     print("Exercise ids  (t)")
-    print(input_1[501]) #exercise id
+    print(input_1[0]) #exercise id
     print("Response (t)")
-    print(input_2[501]) #correct response
+    print(input_2[0]) #correct response
     print("Exercise ids  (t+1)")
-    print(input_3[501]) #exercise ids 1 position ahead
+    print(input_3[0]) #exercise ids 1 position ahead
     print("Response (t +1)")
-    print(input_4[501])
-
+    print(input_4[0])
+    '''
 
     if model_type=='sakt':
         input_1=input_1+E*input_2;
-        
+        '''
         print("============NETWORK INPUT=============== \n")
         print("E = 26688")
         print("INTERACTION SEQUENCE: Exercise ids  (t) + E*Response (t) \n",input_1[0])
         print("QUESTION SEQUENCE : Exercise ids  (t+1)\n ", input_3[0])
         print("RESPONSE SEQUENCE: Responses (t+1) \n", input_4[0] )
-
+        '''
         return torch.stack((input_1,input_3,input_4),0),N,E,units
     elif model_type=='saint':
         return torch.stack((input_1,input_2),0),N,E,units
