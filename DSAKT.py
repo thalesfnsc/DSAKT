@@ -139,7 +139,7 @@ def train_dsakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, tr
         N_val = valid_data.shape[1]
         train_loader = dataloader(train_data,batch_size=batch_size,shuffle=True)
         train_steps = len(train_loader)
-        
+
         #creating unit_list_val 
         count = 0
         unit_list_val = []
@@ -209,12 +209,12 @@ if __name__ =="__main__":
     parser.add_argument("-drp", "--dropout", type=float);
     parser.add_argument("-lr", "--learn_rate", type=float);
     parser.add_argument("-t", "--train_data", required=True);
-    parser.add_argument("-v", "--val_data", required=True);
+    parser.add_argument("-v", "--val_data", required=False);
     parser.add_argument("-s", "--save_path", required=True);
     args = parser.parse_args();
 
     lr = 0.3;
-    window_size = 50;
+    window_size = 350;
     dim = 24;
     dropout = 0.7;
     heads = 8;

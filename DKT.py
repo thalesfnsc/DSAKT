@@ -6,6 +6,9 @@ Last modified on Sat Apr 24 16:57:38 2021
 """
 import torch
 import torch.nn as nn
+from utils import get_data
+from sklearn.model_selection import train_test_split
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu");
 
@@ -35,7 +38,7 @@ from sklearn import metrics
 from utils import getdata, dataloader
 from tqdm import tqdm   
 
-def train_dkt(window_size:int, dim:int, lr:float, train_path:str, valid_path:str, save_path:str):
+def train_dkt(window_size:int, dim:int, lr:float, train_path:str, valid_path:str, save_path:str,default:bool):
     
     print("using {}".format(device));
     
@@ -43,12 +46,33 @@ def train_dkt(window_size:int, dim:int, lr:float, train_path:str, valid_path:str
     max_grad_norm = 20;
     epochs = 100;
     
-    train_data,N_train,E_train,unit_list_train = getdata(window_size=window_size, path=train_path, model_type='sakt')
-    valid_data,N_val,E_test,unit_list_val = getdata(window_size=window_size, path=valid_path, model_type='sakt');        
-    train_loader = dataloader(train_data, batch_size=batch_size, shuffle=True);
-    valid_loader = dataloader(valid_data, batch_size=batch_size, shuffle=False);
-    train_steps=len(train_loader);
-    E = max(E_train, E_test);
+    if (default):
+        train_data,N_train,E_train,unit_list_train = getdata(window_size=window_size, path=train_path, model_type='sakt')
+        valid_data,N_val,E_test,unit_list_val = getdata(window_size=window_size, path=valid_path, model_type='sakt');        
+        train_loader = dataloader(train_data, batch_size=batch_size, shuffle=True);
+        valid_loader = dataloader(valid_data, batch_size=batch_size, shuffle=False);
+        train_steps=len(train_loader);
+        E = max(E_train, E_test);
+
+    else:
+        data,E = get_data(train_path,window_size)
+        train_data,valid_data = train_test_split(data.permute(1,0,2),test_size = 0.2)
+        train_data = train_data.permute(1,0,2)
+        valid_data = valid_data.permute(1,0,2)
+        N_val = valid_data.shape[1]
+        train_loader = dataloader(train_data,batch_size=batch_size,shuffle=True)
+        train_steps = len(train_loader)
+
+        #creating unit_list_val 
+        count = 0
+        unit_list_val = []
+        for i in range(valid_data.shape[1]):
+            for j in range(valid_data.shape[2]):
+                if valid_data[0][i][j] !=0:
+                    count = count +1
+            unit_list_val.append(count)
+            count = 0
+        
     
     model = DKT(window_size=window_size, num_skills=E, dim=dim);
     model.to(device);
@@ -115,12 +139,12 @@ if __name__ =="__main__":
     parser.add_argument("-d", "--dim", type=int);
     parser.add_argument("-lr", "--learn_rate", type=float);
     parser.add_argument("-t", "--train_data", required=True);
-    parser.add_argument("-v", "--val_data", required=True);
+    parser.add_argument("-v", "--val_data", required=False);
     parser.add_argument("-s", "--save_path", required=True);
     args = parser.parse_args();
 
     lr = 0.001;
-    window_size = 50;
+    window_size = 350;
     dim = 200;
 
     if args.window_size:
@@ -135,4 +159,5 @@ if __name__ =="__main__":
               lr=lr, 
               train_path=args.train_data, 
               valid_path=args.val_data, 
-              save_path=args.save_path);
+              save_path=args.save_path,
+              default=False);
