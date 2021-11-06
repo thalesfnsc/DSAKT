@@ -41,10 +41,10 @@ def get_data(data_path,max_sequence_size):
         array_problems_ahead.append(student_problem_id[1:] + [0]*((max_sequence_size+1) - sequence_size))
         array_responses_ahead.append(student['correct'][1:] + [0] * ((max_sequence_size+1) -sequence_size ))
 
-    problems = torch.IntTensor(array_problems)
-    problems_ahead = torch.IntTensor(array_problems_ahead)
-    responses = torch.IntTensor(array_responses)
-    responses_ahead = torch.IntTensor(array_responses_ahead)
+    problems = torch.IntTensor(array_problems).type(torch.int64)
+    problems_ahead = torch.IntTensor(array_problems_ahead).type(torch.int64)
+    responses = torch.IntTensor(array_responses).type(torch.int64)
+    responses_ahead = torch.IntTensor(array_responses_ahead).type(torch.int64)
     interaction = problems + E*responses
     
     data = torch.stack((interaction,problems_ahead,responses_ahead))
@@ -173,6 +173,8 @@ def dataloader(data, batch_size, shuffle:bool):
     for i in range(int(len(data)/batch_size)):
         temp = torch.index_select(data, 0, lis[i*batch_size : (i+1)*batch_size]);
         ret.append(temp);
+    #print(ret)  
+    #print(len(ret))
     return torch.stack(ret, 0).permute(0,2,1,3);
 
 class NoamOpt:

@@ -42,7 +42,7 @@ def train_dkt(window_size:int, dim:int, lr:float, train_path:str, valid_path:str
     
     print("using {}".format(device));
     
-    batch_size = 128;
+    batch_size = 64;
     max_grad_norm = 20;
     epochs = 100;
     
@@ -61,6 +61,7 @@ def train_dkt(window_size:int, dim:int, lr:float, train_path:str, valid_path:str
         valid_data = valid_data.permute(1,0,2)
         N_val = valid_data.shape[1]
         train_loader = dataloader(train_data,batch_size=batch_size,shuffle=True)
+        valid_loader = dataloader(valid_data,batch_size=batch_size,shuffle=False)
         train_steps = len(train_loader)
 
         #creating unit_list_val 
@@ -90,7 +91,7 @@ def train_dkt(window_size:int, dim:int, lr:float, train_path:str, valid_path:str
         train_bar = tqdm(train_loader);
         for data in train_bar:
             logit, (h,c) = model(data[0].to(device), (h,c));
-            logits = torch.gather(logit, 2, data[1].unsqueeze(2).to(device));
+            logits = torch.gather(logit, 2, data[1].unsqueeze(2).to(device).type(torch.int64));
             correct = data[2].float().unsqueeze(-1).to(device);
             
             loss = model.loss_function(logits, correct);
