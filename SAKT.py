@@ -85,7 +85,7 @@ def train_sakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, tra
         train_loader = dataloader(train_data,batch_size=batch_size,shuffle=True)
         train_steps = len(train_loader)
         
-        #creating unit_list_val after separate train and valid data
+        #creating unit_list_val 
         count = 0
         unit_list_val = []
         for i in range(valid_data.shape[1]):
