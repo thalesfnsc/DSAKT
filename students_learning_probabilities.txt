@@ -1,0 +1,15 @@
+
+student id: Stu_002769db730fa4d61ed6f962b38eab6f
+skill learning probability: {'OrderingDecimals': 0.9987706013787226, 'PlacementOnNumberLine': 0.995033198349943, 'CompleteTheSequence': 0.8455347349164652, 'DecimalAddition': 0.7858349830425586}
+
+student id: Stu_011b4d60b1589e545adb9ae7d5ad6f14
+skill learning probability: {'OrderingDecimals': 0.9918374288468401, 'PlacementOnNumberLine': 0.9820137900379085, 'CompleteTheSequence': 0.8175744761936437, 'DecimalAddition': 0.710949502625004}
+
+student id: Stu_020a0dc2d7846c787a883c55da7b521f
+skill learning probability: {'OrderingDecimals': 0.9426758241011313, 'PlacementOnNumberLine': 0.9088770389851438, 'CompleteTheSequence': 0.7685247834990175, 'DecimalAddition': 0.6224593312018546}
+
+student id: Stu_024e2d136ae62f0f7ed61221f784c3ad
+skill learning probability: {'OrderingDecimals': 0.9758729785823308, 'PlacementOnNumberLine': 0.9568927450589139, 'CompleteTheSequence': 0.8455347349164652, 'DecimalAddition': 0.6899744811276125}
+
+student id: Stu_037d671c6afe48d8cf71851bc0ab9cd8
+skill learning probability: {'OrderingDecimals': 0.9370266439430035, 'PlacementOnNumberLine': 0.9088770389851438, 'CompleteTheSequence': 0.7685247834990175, 'DecimalAddition': 0.6224593312018546}

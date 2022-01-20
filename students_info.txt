@@ -1,0 +1,37 @@
+
+student id : Stu_002769db730fa4d61ed6f962b38eab6f
+Gamma: [192.0, 160.0, 36.0, 32.0]
+Rho:[84.0, 60.0, 40.0, 28.0]
+Sucess param:420.0
+Fail param:212.0
+min Beta:-2.0
+student id : Stu_011b4d60b1589e545adb9ae7d5ad6f14
+Gamma: [160.0, 140.0, 44.0, 32.0]
+Rho:[40.0, 28.0, 24.0, 12.0]
+Sucess param:376.0
+Fail param:104.0
+min Beta:-2.0
+student id : Stu_020a0dc2d7846c787a883c55da7b521f
+Gamma: [28.0, 32.0, 8.0, 0]
+Rho:[92.0, 68.0, 48.0, 28.0]
+Sucess param:68.0
+Fail param:236.0
+min Beta:-2.0
+student id : Stu_024e2d136ae62f0f7ed61221f784c3ad
+Gamma: [132.0, 100.0, 44.0, 32.0]
+Rho:[24.0, 32.0, 32.0, 8.0]
+Sucess param:308.0
+Fail param:96.0
+min Beta:-2.0
+student id : Stu_037d671c6afe48d8cf71851bc0ab9cd8
+Gamma: [80.0, 52.0, 24.0, 20.0]
+Rho:[36.0, 48.0, 32.0, 8.0]
+Sucess param:176.0
+Fail param:124.0
+min Beta:-2.0
+student id : Stu_03f78df6debaf513b20256b163216703
+Gamma: [84.0, 88.0, 32.0, 36.0]
+Rho:[72.0, 44.0, 44.0, 16.0]
+Sucess param:240.0
+Fail param:176.0
+min Beta:-2.0

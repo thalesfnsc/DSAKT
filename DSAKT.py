@@ -9,6 +9,7 @@ import torch.nn as nn
 import numpy as np
 from utils import get_data
 from sklearn.model_selection import train_test_split
+import pickle
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu");
 
@@ -122,7 +123,7 @@ def train_dsakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, tr
     print("using {}".format(device));
     
     batch_size = 128;
-    epochs = 100;
+    epochs = 300;
 
     if(default):
         train_data,N_train,E_train,unit_list_train = getdata(window_size=window_size, path=train_path, model_type='sakt')
@@ -133,9 +134,12 @@ def train_dsakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, tr
 
     else:
         data,E = get_data(train_path,window_size)
-        train_data,valid_data = train_test_split(data.permute(1,0,2),test_size = 0.2)
-        train_data = train_data.permute(1,0,2)
-        valid_data = valid_data.permute(1,0,2)
+        #train_data,valid_data = train_test_split(data.permute(1,0,2),test_size = 0.2)
+        
+        #train_data = train_data.permute(1,0,2)
+        #valid_data = valid_data.permute(1,0,2)
+        train_data = data
+        valid_data = data
         N_val = valid_data.shape[1]
         train_loader = dataloader(train_data,batch_size=batch_size,shuffle=True)
         train_steps = len(train_loader)
@@ -156,7 +160,7 @@ def train_dsakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, tr
     optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8);
     scheduler = NoamOpt(optimizer, warmup=60, dimension=dim, factor=lr);
     best_auc = 0.0;
-    
+    list_auc = []
     for epoch in range(epochs):
 
         model.train();
@@ -196,8 +200,13 @@ def train_dsakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, tr
             if auc > best_auc:
                 best_auc = auc;
                 torch.save(model, save_path);
-                
+            list_auc.append(auc)    
             print('val_auc: %.3f mse: %.3f acc: %.3f' %(auc, rmse, acc / len(pred)));
+    
+        
+    with open('/content/DSAKT/auc_DSAKT.pickle','wb') as file:
+      pickle.dump({"auc":list_auc},file)
+
     print(best_auc);
 
 

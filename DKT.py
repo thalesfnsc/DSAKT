@@ -15,8 +15,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu");
 class DKT(nn.Module):
     def __init__(self, window_size, num_skills, dim=64):
         super(DKT, self).__init__();
-        self.loss_function = nn.BCELoss();
         
+        self.loss_function = nn.BCELoss();
         self.Embedding = nn.Embedding(num_embeddings=2*num_skills+1, embedding_dim=dim, padding_idx=0);
         self.LSTM = nn.LSTM(input_size=dim, hidden_size=dim);
         self.Prediction = nn.Sequential(nn.Linear(in_features=dim, out_features=num_skills+1),
