@@ -1,15 +1,28 @@
+import imp
 import os
 import math
 import torch
 import argparse
 from sklearn import metrics
 from utils import getdata
+from utils import get_data
 from DSAKT import DSAKT, Encoder, Decoder
 from SAKT import SAKT
 
 def predict(window_size:int, model_path:str, data_path:str):
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu");
-    pre_data,N_val,E,unit_list_val = getdata(window_size=window_size,path=data_path,model_type='sakt')
+    pre_data,E = get_data(data_path,window_size)
+    N_val = pre_data.shape[1]
+    count = 0
+    unit_list_val = []
+    for i in range(pre_data.shape[1]):
+        for j in range(pre_data.shape[2]):
+            if pre_data[0][i][j] !=0:
+                count = count +1
+        unit_list_val.append(count)
+        count = 0
+
 
     model = torch.load(model_path);
     assert model.window_size == window_size;
@@ -40,7 +53,9 @@ def predict(window_size:int, model_path:str, data_path:str):
         fpr, tpr, thresholds = metrics.roc_curve(cort, pred, pos_label=1);
         auc = metrics.auc(fpr, tpr);
         
+        
         print('val_auc: %.3f mse: %.3f acc: %.3f' %(auc, rmse, acc));
+        return pred, cort
         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser();
@@ -53,3 +68,4 @@ if __name__ == "__main__":
     assert os.path.exists(args.model_path);
     
     predict(int(args.window_size), args.model_path, args.data_path);
+    

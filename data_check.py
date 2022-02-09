@@ -12,6 +12,11 @@ df = pd.read_csv('/home/thales/DSAKT/errex data subproblems.csv')
 #print(df_1['correct'].sum())
 
 
+
+
+
+
+'''
 df_2 = pd.read_excel('/home/thales/DSAKT/ErrEx posttest data.xlsx')
 
 
@@ -20,7 +25,7 @@ students = df['student_id'].unique()
 problems = df['problem_id'].unique()
 kcs = df['skill_name'].unique()
 
-'''
+
 attempts_count = {}
 
 for student in students:
@@ -33,7 +38,7 @@ for student in students:
         if count > 1:
             student_repeat.append(student)
             break
-'''
+
 
 
 problem_per_KC = {}
@@ -53,7 +58,7 @@ students_in_sheet = df_2['Anon Student Id'].values
 students_in_csv = df['student_id'].unique()
 
 
-'''
+
 columns_sum = {}
 i = 0
 for column in df_2.columns:
@@ -61,7 +66,7 @@ for column in df_2.columns:
     i = i +1
 
 print(columns_sum)
-'''
+
             
 
 test_1 = df_2['Regz_AddDecimals1_Pre'].sum() 
@@ -100,3 +105,4 @@ for column in df_2.columns:
 print(counter_delpos)
 
 print('Total problems ids:',len(problems))
+'''

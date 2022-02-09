@@ -40,7 +40,6 @@ def get_data(data_path,max_sequence_size):
         array_problems.append(student_problem_id[:len_exercises -1] + [0] * ((max_sequence_size+1) - sequence_size))
         array_problems_ahead.append(student_problem_id[1:] + [0]*((max_sequence_size+1) - sequence_size))
         array_responses_ahead.append(student['correct'][1:] + [0] * ((max_sequence_size+1) -sequence_size ))
-
     problems = torch.IntTensor(array_problems).type(torch.int64)
     problems_ahead = torch.IntTensor(array_problems_ahead).type(torch.int64)
     responses = torch.IntTensor(array_responses).type(torch.int64)

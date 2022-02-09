@@ -123,7 +123,7 @@ def train_dsakt(window_size:int, dim:int, heads:int, dropout:float, lr:float, tr
     print("using {}".format(device));
     
     batch_size = 128;
-    epochs = 300;
+    epochs = 300;   
 
     if(default):
         train_data,N_train,E_train,unit_list_train = getdata(window_size=window_size, path=train_path, model_type='sakt')

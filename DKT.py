@@ -142,7 +142,7 @@ if __name__ =="__main__":
     parser.add_argument("-t", "--train_data", required=True);
     parser.add_argument("-v", "--val_data", required=False);
     parser.add_argument("-s", "--save_path", required=True);
-    args = parser.parse_args();
+    args = parser.parseN_args();
 
     lr = 0.001;
     window_size = 350;
