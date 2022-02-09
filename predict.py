@@ -8,6 +8,7 @@ from utils import getdata
 from utils import get_data
 from DSAKT import DSAKT, Encoder, Decoder
 from SAKT import SAKT
+import pickle
 
 def predict(window_size:int, model_path:str, data_path:str):
 
@@ -54,8 +55,10 @@ def predict(window_size:int, model_path:str, data_path:str):
         auc = metrics.auc(fpr, tpr);
         
         
+        
         print('val_auc: %.3f mse: %.3f acc: %.3f' %(auc, rmse, acc));
-        return pred, cort
+        with open ('/content/predicts.pickle','wb') as file:
+           pickle.dump({'preds':predict,'correct':correctness},file)
         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser();
