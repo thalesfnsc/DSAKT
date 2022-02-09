@@ -83,8 +83,8 @@ def get_data_predict(data_path,max_sequence_size):
         '''    
         len_responses = len(student['correct'])
         len_exercises = len(student_problem_id)
-        array_responses.append(student['correct'][:len_responses] + [0] * ((max_sequence_size+1) - sequence_size)) 
-        array_problems.append(student_problem_id[:len_exercises ] + [0] * ((max_sequence_size+1) - sequence_size))
+        array_responses.append(student['correct'][:len_responses] + [0] * ((max_sequence_size) - sequence_size)) 
+        array_problems.append(student_problem_id[:len_exercises] + [0] * ((max_sequence_size) - sequence_size))
         array_problems_ahead.append(student_problem_id[1:] + [0]*((max_sequence_size+1) - sequence_size))
         array_responses_ahead.append(student['correct'][1:] + [0] * ((max_sequence_size+1) -sequence_size ))
     problems = torch.IntTensor(array_problems).type(torch.int64)
