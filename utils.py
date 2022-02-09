@@ -52,6 +52,50 @@ def get_data(data_path,max_sequence_size):
 
 
 
+def get_data_predict(data_path,max_sequence_size):
+    
+    array_responses = []
+    array_problems = []
+    array_problems_ahead = []
+    array_responses_ahead = []
+    #Loading data in a pandas DataFrame
+
+    df = pd.read_csv(data_path)
+
+    problems_ids = df['problem_id'].unique()
+    E = len(problems_ids)
+    
+    users_data = df.groupby('student_id')[['problem_id','condition','skill_name','correct']].agg(lambda x:list(x))
+    index_to_id = np.unique([*itertools.chain.from_iterable(users_data['problem_id'])])
+    id_to_index = {index_to_id[i]: i for i in range(len(index_to_id))}
+
+
+    for index,student in users_data.iterrows():
+        sequence_size = len(student['problem_id'])
+        student_problem_id = [id_to_index[i] for i in student['problem_id']]
+        '''
+        if sequence_size > max_sequence_size:
+            for i in range(max_sequence_size,sequence_size):
+                array_responses.append(student['correct'][(i - max_sequence_size):i])
+                array_problems.append(student_problem_id[(i - max_sequence_size):i])
+
+        else:
+        '''    
+        len_responses = len(student['correct'])
+        len_exercises = len(student_problem_id)
+        array_responses.append(student['correct'][:len_responses -1] + [0] * ((max_sequence_size+1) - sequence_size)) 
+        array_problems.append(student_problem_id[:len_exercises -1] + [0] * ((max_sequence_size+1) - sequence_size))
+        array_problems_ahead.append(student_problem_id[1:] + [0]*((max_sequence_size+1) - sequence_size))
+        array_responses_ahead.append(student['correct'][1:] + [0] * ((max_sequence_size+1) -sequence_size ))
+    problems = torch.IntTensor(array_problems).type(torch.int64)
+    problems_ahead = torch.IntTensor(array_problems_ahead).type(torch.int64)
+    responses = torch.IntTensor(array_responses).type(torch.int64)
+    responses_ahead = torch.IntTensor(array_responses_ahead).type(torch.int64)
+    interaction = problems + E*responses
+    
+    data = torch.stack((interaction,problems,responses))
+
+    return  data,E
 
 def getdata(window_size,path,model_type,drop=False):
     '''
