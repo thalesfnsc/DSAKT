@@ -13,7 +13,7 @@ import pickle
 def predict(window_size:int, model_path:str, data_path:str):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu");
-    pre_data,E = get_data_predict(data_path,window_size)
+    pre_data,E = get_data(data_path,window_size)
     N_val = pre_data.shape[1]
     count = 0
     unit_list_val = []
