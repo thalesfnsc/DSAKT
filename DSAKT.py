@@ -222,7 +222,7 @@ if __name__ =="__main__":
     parser.add_argument("-s", "--save_path", required=True);
     args = parser.parse_args();
 
-    lr = 0.3;
+    lr = 0.001;
     window_size = 350;
     dim = 24;
     dropout = 0.7;
